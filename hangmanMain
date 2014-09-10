@@ -1,0 +1,161 @@
+/*
+ * Aaryn Goodwill
+ * Software Engineering CSIS 2450
+ * version 1.0
+ * September 4th, 2014
+ */
+package hangman;
+
+import java.util.Arrays;
+import java.util.Random;
+import java.util.Scanner;
+
+public class hangmanApp {
+	
+	private static boolean running = true;
+	private static String[] word, words, guessedWord;
+	private static Random rand;
+	private static String letterGuess;
+	private static StringBuilder sb, sb2, sb3;
+	private static Scanner input;
+	private static int lives;
+	
+	//Main method, create random number generator to select a random word out
+	//of the String array then initialize stringbuilders for generating the necessary
+	//output and then call the startGame method which sets up the game from a fresh
+	//start. Formats the stringbuilders sets the number of lives to 6 and then 
+	//initializes arrays that are used to determine strings.
+	public static void main(String[] args){
+		
+		rand = new Random();
+		input = new Scanner(System.in);
+		words = new String[]{"computer", "dog", "cat", "software", "student", ""};
+		
+		sb = new StringBuilder();
+		sb2 = new StringBuilder();
+		
+		startGame();
+		//do-while loop to continue through game as long as lives are > 0 and 'done' hasnt been typed
+		//prints necessary output according to events in-game lose, win etc.
+		do{
+			System.out.println("Lives: " + lives + "\n" + sb2);
+			
+			letterGuess = input.nextLine();
+			
+			if(guessLetter(letterGuess)){
+				System.out.println("You Guessed A Letter!");
+			}else{
+				lives--;
+				if(lives == 0){
+					System.out.println("Game Over!\n"
+							+ "\nYou Are Out Of Lives!" + "\nThe Word Was: " + sb + 
+								"\nPlay Again?\n 'yes' or 'no'");
+					String l = input.nextLine();
+					if(l.equalsIgnoreCase("yes")){
+						startGame();
+					}else{
+						running = false;
+					}
+				}
+				System.out.println("Better Try Again!");
+			}
+			
+			if(gameWon()){
+				System.out.println(sb2);
+				System.out.println("You Won!\nWould You Like To Try Again?\n'yes' or 'no'" );
+				String l = input.nextLine();
+				if(l.equalsIgnoreCase("yes")){
+					startGame();
+				}else{
+					running = false;
+				}
+			}
+			
+			if(letterGuess.equalsIgnoreCase("done")){
+				running = false;
+			}
+			
+		}while(running);
+		
+		
+	}
+	//startGame method described above
+	private static void startGame(){
+		sb2.delete(0, sb2.length());
+		sb.delete(0, sb.length());
+		lives = 6;
+		System.out.println("Welcome to Hangman!\nTry and guess the word below:"
+				+ "\nTo exit anytime type 'done'");
+		
+		sb.append(words[rand.nextInt(words.length - 1)]);
+		
+		word = new String[sb.length()];
+		
+		for(int i = 0; i < word.length; i++){
+			word[i] = sb.substring(i, i + 1);
+		}
+		
+		guessedWord = new String[word.length];
+		buildOutput();
+	}
+	
+	//guessLetter method first checks to see if letter has already been guessed then goes
+	//on to check if the letter is in the word and finally checks to see what letter in the word
+	//has been guessed and then calls buildOutput to build the current output
+	private static boolean guessLetter(String letterGuessed) {
+		int count = 0;
+		sb2.delete(0, sb2.length());
+		for(int i = 0; i < word.length; i++){
+			if(word[i].equals(letterGuessed)){
+				if(guessedWord[i] == (word[i])){
+				System.out.println("You Already Guessed That Letter!");
+				buildOutput();
+				return false;
+				}
+			}
+		}
+		
+		for(int i = 0; i < word.length; i++){
+			if(!(word[i].equals(letterGuessed))){
+				count++;
+			}
+			if(count == word.length){
+				buildOutput();
+				return false;
+			}
+		}
+		for(int i = 0; i < word.length; i++){
+			if(word[i].equals(letterGuessed)){
+				guessedWord[i] = word[i];
+			}
+		}
+		buildOutput();
+		return true;
+	}
+	//uses stringbuilder to build "hangman" type output with underscores '_' and the appropriate letters
+	private static void buildOutput(){
+		for(int i = 0; i < word.length; i++){
+			if(guessedWord[i] == null){
+				sb2.append("_ ");
+			}else{
+				sb2.append(guessedWord[i] + " ");
+			}
+		}	
+	}
+	//gameWon method counts letters that are guessed within the word if all letters have been guess
+	//then returns true, otherwise returns false.
+	private static boolean gameWon() {
+		int count = 0;
+		for(int i = 0; i < word.length; i++){
+			
+			if(guessedWord[i] == word[i]){
+				count++;
+			}
+			if(count ==  word.length){
+				return true;
+			}
+		}
+		
+		return false;
+	}
+}
