@@ -49,9 +49,9 @@ public class hangmanApp {
 				if(lives == 0){
 					System.out.println("Game Over!\n"
 							+ "\nYou Are Out Of Lives!" + "\nThe Word Was: " + sb + 
-								"\nPlay Again?\n 'yes' or 'no'");
+								"\nPlay Again?\n 'y' or 'n'");
 					String l = input.nextLine();
-					if(l.equalsIgnoreCase("yes")){
+					if(l.equalsIgnoreCase("y")){
 						startGame();
 					}else{
 						running = false;
@@ -62,9 +62,9 @@ public class hangmanApp {
 			
 			if(gameWon()){
 				System.out.println(sb2);
-				System.out.println("You Won!\nWould You Like To Try Again?\n'yes' or 'no'" );
+				System.out.println("You Won!\nWould You Like To Try Again?\n'y' or 'n'" );
 				String l = input.nextLine();
-				if(l.equalsIgnoreCase("yes")){
+				if(l.equalsIgnoreCase("y")){
 					startGame();
 				}else{
 					running = false;
